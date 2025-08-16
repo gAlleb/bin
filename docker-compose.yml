@@ -1,12 +1,26 @@
-version: '3.3'
 services:
   pastebin:
-    image: wantguns/bin
-    container_name: pastebin
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: bin
     ports:
-      - 127.0.0.1:6163:6163
+      - 6163:6163
     environment:
       - BIN_PORT=6163 # Defaults to 6162
-      - BIN_LIMITS={form="16 MiB"}
+      - BIN_LIMITS={form="5 MiB",file="5 MiB"}
     volumes:
       - ./upload:/upload  # upload folder will have your pastes
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "3"
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.27.0.0/16
+          gateway: 172.27.0.1
